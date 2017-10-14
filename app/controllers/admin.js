@@ -6,12 +6,12 @@ module.exports.formulario_inclusao = function (application, req, res) {
 };
 
 module.exports.noticias_salvar = function (application, req, res) {
+    // BodyParser recebe os dados do formulário e cria um objeto no formato JSON
     var noticia = req.body;
 
     // Importa moment aqui para fazer validação de datas
     var moment = require('moment');
-
-    // BodyParser recebe os dados do formulário e cira um objeto no formato JSON
+    
     // Vai tratar as informações do form com o Express Validator
     req.assert('titulo', 'Título não pode ficar em branco').notEmpty();
     req.assert('resumo', 'Resumo não pode ficar em branco').notEmpty();
@@ -23,11 +23,11 @@ module.exports.noticias_salvar = function (application, req, res) {
     // Cria um objeto JSON que vai conter as mensagens de erro dos campos
     var validationErrors = req.validationErrors();
 
-    // Checa se a data informada está num formato válido
+    // Checa se a data informada está num formato válido de "ano-mês-dia"
     var isValidDate = moment(noticia.data_noticia, "YYYY-MM-DD").isValid();
 
     // Se a data não é válida acrescenta no JSON de validationErros a mensagem 
-    // de erro pois ele retornará para o form para mostrar o que houve
+    // de erro pois ele retornará para o formulário para mostrar o que houve
     if (!isValidDate) {
         validationErrors.push({
             location: 'body',
@@ -38,12 +38,11 @@ module.exports.noticias_salvar = function (application, req, res) {
     }
 
     if (validationErrors) {
-        // Se algum erro ocorreu, renderiza "admin.ejs" com os erros em questão
+        // Se algum erro ocorreu, renderiza "formulario_inclusao.ejs" com os erros em questão
         res.render('admin/formulario_inclusao', {
             validacao: validationErrors,
             noticia: noticia
         });
-        return;
 
     } else {
         // Se deu tudo certo, salva os dados no banco
